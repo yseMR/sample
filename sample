@@ -1,0 +1,260 @@
+#include "kernel.h"
+#include "kernel_id.h"
+#include "ecrobot_interface.h"
+#include "balancer.h" /* 倒立振子制御用ヘッダファイル */
+
+short white[6] , black[6] , gray[6];
+short now_white , now_black , now_gray;
+
+//=========================================================================
+/* 初期化用関数 */
+void ecrobot_device_initialize(void)
+{
+	ecrobot_set_light_sensor_active(NXT_PORT_S2);
+	ecrobot_init_sonar_sensor(NXT_PORT_S4);
+	ecrobot_init_bt_connection();
+}
+/* 終了用関数 */
+void ecrobot_device_terminate(void)
+{
+	ecrobot_set_light_sensor_inactive(NXT_PORT_S2);
+	ecrobot_set_motor_speed(NXT_PORT_A, 0);
+	ecrobot_set_motor_speed(NXT_PORT_B, 0);
+	ecrobot_set_motor_speed(NXT_PORT_C, 0);
+	ecrobot_term_bt_connection();
+}
+
+void user_1ms_isr_type2(void)
+{
+
+}
+
+void carib(char kaisu);
+
+void motor_set(short B_speed, short C_speed);
+
+void reset(void);
+
+TASK(TaskMain)
+{	
+	carib(4);
+
+	while(ecrobot_get_touch_sensor(NXT_PORT_S1)==0);
+	display_clear(0);
+		
+	reset();
+
+	// 第１
+	while( ( nxt_motor_get_count(NXT_PORT_B) + nxt_motor_get_count(NXT_PORT_C) ) / 2 < 200)
+	{
+		if(ecrobot_get_light_sensor(NXT_PORT_S2) > gray[0])
+		{
+			motor_set(60 ,45);
+
+			now_black = ecrobot_get_light_sensor(NXT_PORT_S2);
+			display_update();
+			display_goto_xy(0,2);
+			display_string("BLACK=");
+			display_goto_xy(7,2);
+			display_int(now_black,3);
+		}
+
+		else if(ecrobot_get_light_sensor(NXT_PORT_S2) < gray[0] - 40)
+		{
+			motor_set(45,60);
+			
+			now_white = ecrobot_get_light_sensor(NXT_PORT_S2);
+			display_goto_xy(0,1);
+			display_string("WHITE=");
+			display_goto_xy(7,1);
+			display_int(now_white,3);
+			display_update();
+			
+		}
+		now_gray = (now_white + now_black) / 2;
+		display_goto_xy(0,4);
+		display_string("GRAY=");
+		display_goto_xy(7,4);
+		display_int(now_gray,3);
+		display_update();
+	}
+	ecrobot_sound_tone(1000,100,50);
+
+	// 第２
+	while( ( nxt_motor_get_count(NXT_PORT_B) + nxt_motor_get_count(NXT_PORT_C) ) / 2 < 1600)
+	{
+		if(ecrobot_get_light_sensor(NXT_PORT_S2) > gray[1])
+		{
+			motor_set(60 ,45);
+
+			now_black = ecrobot_get_light_sensor(NXT_PORT_S2);
+			display_update();
+			display_goto_xy(0,2);
+			display_string("BLACK=");
+			display_goto_xy(7,2);
+			display_int(now_black,3);
+		}
+
+		else if(ecrobot_get_light_sensor(NXT_PORT_S2) < gray[1])
+		{
+			motor_set(45,60);
+			
+			now_white = ecrobot_get_light_sensor(NXT_PORT_S2);
+			display_goto_xy(0,1);
+			display_string("WHITE=");
+			display_goto_xy(7,1);
+			display_int(now_white,3);
+			display_update();
+			
+		}
+		now_gray = (now_white + now_black) / 2;
+		display_goto_xy(0,4);
+		display_string("GRAY=");
+		display_goto_xy(7,4);
+		display_int(now_gray,3);
+		display_update();
+	}
+
+	ecrobot_sound_tone(1000,100,50);
+
+	// 第3
+
+	while( ( nxt_motor_get_count(NXT_PORT_B) + nxt_motor_get_count(NXT_PORT_C) ) / 2 < 1800)
+	{
+		if(ecrobot_get_light_sensor(NXT_PORT_S2) > gray[2])
+		{
+			motor_set(60 ,45);
+
+			now_black = ecrobot_get_light_sensor(NXT_PORT_S2);
+			display_update();
+			display_goto_xy(0,2);
+			display_string("BLACK=");
+			display_goto_xy(7,2);
+			display_int(now_black,3);
+		}
+
+		else if(ecrobot_get_light_sensor(NXT_PORT_S2) < gray[2] - 40)
+		{
+			motor_set(45,60);
+			
+			now_white = ecrobot_get_light_sensor(NXT_PORT_S2);
+			display_goto_xy(0,1);
+			display_string("WHITE=");
+			display_goto_xy(7,1);
+			display_int(now_white,3);
+			display_update();
+			
+		}
+		now_gray = (now_white + now_black) / 2;
+		display_goto_xy(0,4);
+		display_string("GRAY=");
+		display_goto_xy(7,4);
+		display_int(now_gray,3);
+		display_update();
+	}
+	ecrobot_sound_tone(1000,100,50);
+
+
+	// 第4
+	while( ( nxt_motor_get_count(NXT_PORT_B) + nxt_motor_get_count(NXT_PORT_C) ) / 2 < 4000)
+	{
+		if(ecrobot_get_light_sensor(NXT_PORT_S2) > gray[3])
+		{
+			motor_set(60 ,45);
+
+			now_black = ecrobot_get_light_sensor(NXT_PORT_S2);
+			display_update();
+			display_goto_xy(0,2);
+			display_string("BLACK=");
+			display_goto_xy(7,2);
+			display_int(now_black,3);
+		}
+
+		else if(ecrobot_get_light_sensor(NXT_PORT_S2) < gray[3] )
+		{
+			motor_set(45,60);
+			
+			now_white = ecrobot_get_light_sensor(NXT_PORT_S2);
+			display_goto_xy(0,1);
+			display_string("WHITE=");
+			display_goto_xy(7,1);
+			display_int(now_white,3);
+			display_update();
+			
+		}
+		now_gray = (now_white + now_black) / 2;
+		display_goto_xy(0,4);
+		display_string("GRAY=");
+		display_goto_xy(7,4);
+		display_int(now_gray,3);
+		display_update();
+	}
+	ecrobot_sound_tone(1000,100,50);
+
+	while(1)
+	{
+		motor_set(0 , 0);
+	}
+}
+
+//////////////////モーター設定//////////////////
+void motor_set(short B_speed, short C_speed)
+{
+	nxt_motor_set_speed(NXT_PORT_B, B_speed , 1);	//　右
+	nxt_motor_set_speed(NXT_PORT_C, C_speed , 1);	// 左
+
+	systick_wait_ms(2);
+}
+
+//////////////////キャリブレーション////////////////
+void carib(char kaisu)
+{
+	for(int i = 0 ; i < kaisu ; i++)
+	{
+		while(ecrobot_get_touch_sensor(NXT_PORT_S1)==0);
+		ecrobot_sound_tone(1000,100,10);
+		display_clear(0);
+		display_update();
+		while(ecrobot_get_touch_sensor(NXT_PORT_S1)==1);
+		
+		while(ecrobot_get_touch_sensor(NXT_PORT_S1)==0);
+			white[i] = ecrobot_get_light_sensor(NXT_PORT_S2);
+		display_clear(0);
+		display_goto_xy(0,1);
+		display_string("WHITE=");
+		display_goto_xy(7,1);
+		display_int(white[i],3);
+		display_update();
+		
+		ecrobot_sound_tone(1000,100,50);
+		systick_wait_ms(500);
+
+		while(ecrobot_get_touch_sensor(NXT_PORT_S1)==0);
+			black[i] = ecrobot_get_light_sensor(NXT_PORT_S2);
+
+		display_goto_xy(0,2);
+		display_string("BLACK=");
+		display_goto_xy(7,2);
+		display_int(black[i],3);
+		display_update();
+		
+		ecrobot_sound_tone(1000,100,50);
+		systick_wait_ms(500);
+
+
+		gray[i] = (white[i] + black[i]) / 2;
+		display_goto_xy(0,4);
+		display_string("GRAY=");
+		display_goto_xy(7,4);
+		display_int(gray[i],3);
+		display_update();
+		systick_wait_ms(500);
+	}
+}
+/////////////////エンコーダリセット////////////
+void reset(void)
+{
+	nxt_motor_set_count(NXT_PORT_A , 0);
+	nxt_motor_set_count(NXT_PORT_B , 0);
+	nxt_motor_set_count(NXT_PORT_C , 0);
+}
